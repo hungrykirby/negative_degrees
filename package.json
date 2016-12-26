@@ -1,0 +1,14 @@
+{
+  "name": "negative_degrees",
+  "version": "0.0.1",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "test": "node app.js"
+  },
+  "keywords": [
+    "twitter"
+  ],
+  "author": "hungrykirby",
+  "license": "ISC"
+}
