@@ -10,5 +10,9 @@
     "twitter"
   ],
   "author": "hungrykirby",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "mongoose": "^4.7.4",
+    "twitter": "^1.7.0"
+  }
 }
