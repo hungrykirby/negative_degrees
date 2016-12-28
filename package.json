@@ -9,6 +9,14 @@
   "keywords": [
     "twitter"
   ],
+  "engines":{
+    "node": "6.2.1",
+    "npm": "3.9.3"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hungrykirby/negative_degrees.git"
+  },
   "author": "hungrykirby",
   "license": "ISC",
   "dependencies": {
