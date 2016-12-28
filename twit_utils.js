@@ -62,6 +62,24 @@ var delete_tweet = function(tweet){
   });
 };
 
+var show_tweets = function(tweets){
+  var promises = [];
+  for (var i = 0; i < tweets.length; i++) {
+    promises.push(show_tweet(tweets[i]));
+  }
+  Promise.all(promises)
+    .then(function (results) {
+      //console.log(results);
+  });
+};
+
+var show_tweet = function(tweet){
+  return new Promise(function(resolve, reject){
+    console.log(tweet.text);
+    resolve(tweet);
+  });
+};
+
 var streaming = function(bot_id){
   twitter.stream('user', function(stream) {
   	stream.on('data', function(data) {
@@ -86,9 +104,8 @@ var streaming = function(bot_id){
   		twitter.post('statuses/update', msg, function(error, tweet, response) {
   			console.log(tweet.text);
   		});
-      get_tweets(id).then(function(tweets){ //must mudufy to look at each tweet
-        console.log(tweets.text);
-      });
+      get_tweets(id)
+        .then(show_tweets);
   	});
   });
 }
