@@ -1,4 +1,6 @@
 var Twitter = require('twitter');
+var analysis = require('./analysis');
+var database = require('./database');
 
 var twitter = new Twitter({
     consumer_key: process.env.CONSUMER_KEY,
@@ -22,7 +24,7 @@ var get_screen_name = function(){
 var get_tweets = function(screen_name){
   return new Promise(function(resolve, reject){
     var params = {
-      count: 100,
+      count: 50,
       screen_name: screen_name,
     };
     twitter.get('statuses/user_timeline', params, function (error, tweets, response) {
@@ -69,7 +71,7 @@ var show_tweets = function(tweets){
   }
   Promise.all(promises)
     .then(function (results) {
-      //console.log(results);
+      console.log(results);
   });
 };
 
@@ -77,6 +79,42 @@ var show_tweet = function(tweet){
   return new Promise(function(resolve, reject){
     console.log(tweet.text);
     resolve(tweet);
+  });
+};
+
+var analysis_tweets = function(tweets){
+  return new Promise(function(resolve, reject){
+    var promises = [];
+    var negative_degrees = 0.0;
+    var count = 0;
+    for (var i = 0; i < tweets.length; i++) {
+      promises.push(analysis_tweet(tweets[i]));
+    }
+    Promise.all(promises)
+      .then(function (results) {
+        console.log('results', results);
+        results.map(function(result){
+          console.log('result', result);
+          negative_degrees += result;
+          count++;
+        });
+      }).then(function(){
+        if(count !== 0){
+          resolve(negative_degrees/count);
+        }else{
+          resolve(0);
+        }
+      });
+
+    });
+};
+
+var analysis_tweet = function(tweet){
+  console.log('tweet', tweet.text);
+  return new Promise(function(resolve, reject){
+    analysis.analyze_sentence(tweet.text).then(function(data){
+      resolve(data);
+    });
   });
 };
 
@@ -97,15 +135,32 @@ var streaming = function(bot_id){
       }
 
   		if (!ifMention || id == bot_id) return;
-  		var msg = {
+  		/*var msg = {
         status: '@' + id + ' ' + text,
       };
-      //console.log(msg);
   		twitter.post('statuses/update', msg, function(error, tweet, response) {
   			console.log(tweet.text);
-  		});
-      get_tweets(id)
-        .then(show_tweets);
+  		});*/
+      if(/*text = '診断して'*/true){
+        console.log('id', id);
+        get_tweets(id)
+          .then(analysis_tweets)
+          .then(function(result){
+            //console.log('streamng', result);
+            var msg = {
+              status: '@' + id + ' '
+                    + 'あなたのツイートから分析したネガティブ度合い(0から1までの値)は'
+                    + result
+                    + 'です。'
+                    + 'どう感じますか？'
+                    + '自分の予想より高いと思う場合には「高い」、逆なら「低い」と教えてください',
+            };
+            twitter.post('statuses/update', msg, function(error, tweet, response) {
+        			console.log(tweet.text);
+        		});
+            database.post_to_db(result)
+          });
+      }
   	});
   });
 }

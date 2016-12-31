@@ -9,7 +9,7 @@
   "keywords": [
     "twitter"
   ],
-  "engines":{
+  "engines": {
     "node": "6.2.1",
     "npm": "3.9.3"
   },
@@ -20,6 +20,7 @@
   "author": "hungrykirby",
   "license": "ISC",
   "dependencies": {
+    "kuromoji": "^0.1.1",
     "mongoose": "^4.7.4",
     "twitter": "^1.7.0"
   }
