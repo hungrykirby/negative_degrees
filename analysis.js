@@ -17,7 +17,7 @@ var analyze_sentence = function(sentence){
           case "動詞":
           degree = get_degrees('verb', tokens[i]);
           if(degree !== -1){
-            sum += (parseFloat(degree) + 1)/2.0;
+            sum += (Number(degree) + 1)/2.0;
             count++;
           }
           break;
@@ -25,7 +25,7 @@ var analyze_sentence = function(sentence){
           case "形容詞":
           degree = get_degrees('adj', tokens[i]);
           if(degree !== -1){
-            sum += (parseFloat(degree) + 1)/2.0;
+            sum += (Number(degree) + 1)/2.0;
             count++;
           }
           break;
@@ -33,7 +33,7 @@ var analyze_sentence = function(sentence){
           case "副詞":
           degree = get_degrees('adverb', tokens[i]);
           if(degree !== -1){
-            sum += (parseFloat(degree) + 1)/2.0;
+            sum += (Number(degree) + 1)/2.0;
             count++;
           }
           break;
@@ -41,7 +41,7 @@ var analyze_sentence = function(sentence){
           case "名詞":
           degree = get_degrees('noun', tokens[i]);
           if(degree !== -1){
-            sum += (parseFloat(degree) + 1)/2.0;
+            sum += (Number(degree) + 1)/2.0;
             count++;
           }
           break;
@@ -49,7 +49,7 @@ var analyze_sentence = function(sentence){
           default:
           degree = get_degrees('out', tokens[i]);
           if(degree !== -1){
-            sum += (parseFloat(degree) + 1)/2.0;
+            sum += (Number(degree) + 1)/2.0;
             count++;
           }
           break;

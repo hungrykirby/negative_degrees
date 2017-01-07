@@ -175,6 +175,7 @@ var streaming = function(bot_id){
             };
             twitter.post('statuses/update', msg, function(error, tweet, response) {
         			console.log(tweet.text);
+              console.log('------------------------------');
         		});
             console.log('result.tweets', result.tweets);
             database.post_to_db_tweet_data(id, description, result.avedegs, result.tweets, result.degrees);
