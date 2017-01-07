@@ -24,7 +24,7 @@ var get_screen_name = function(){
 var get_tweets = function(screen_name){
   return new Promise(function(resolve, reject){
     var params = {
-      count: 50,
+      count: 25,
       screen_name: screen_name,
     };
     twitter.get('statuses/user_timeline', params, function (error, tweets, response) {
@@ -71,13 +71,13 @@ var show_tweets = function(tweets){
   }
   Promise.all(promises)
     .then(function (results) {
-      console.log(results);
+      //console.log(results);
   });
 };
 
 var show_tweet = function(tweet){
   return new Promise(function(resolve, reject){
-    console.log(tweet.text);
+    //console.log(tweet.text);
     resolve(tweet);
   });
 };
@@ -87,22 +87,39 @@ var analysis_tweets = function(tweets){
     var promises = [];
     var negative_degrees = 0.0;
     var count = 0;
+    var count_out0 = 0;
+    var degree_collection = [];
+    var tweet_collection = [];
     for (var i = 0; i < tweets.length; i++) {
+      tweet_collection[i] = tweets[i].text;
       promises.push(analysis_tweet(tweets[i]));
     }
     Promise.all(promises)
       .then(function (results) {
-        console.log('results', results);
+        //console.log('results', results);
         results.map(function(result){
-          console.log('result', result);
+          //console.log(result + ',' + negative_degrees + ',' + );
           negative_degrees += result;
+          degree_collection[count] = result;
           count++;
+          if(result !== 0){
+            count_out0++;
+            //console.log(count_out0);
+          }
         });
       }).then(function(){
-        if(count !== 0){
-          resolve(negative_degrees/count);
+        if(count_out0 !== 0){
+          resolve({
+            'tweets': tweet_collection,
+            'degrees': degree_collection,
+            'avedegs': negative_degrees/count_out0,
+          });
         }else{
-          resolve(0);
+          resolve({
+            'tweets': tweet_collection,
+            'degrees': degree_collection,
+            'avedegs': 0,
+          });
         }
       });
 
@@ -110,9 +127,9 @@ var analysis_tweets = function(tweets){
 };
 
 var analysis_tweet = function(tweet){
-  console.log('tweet', tweet.text);
   return new Promise(function(resolve, reject){
     analysis.analyze_sentence(tweet.text).then(function(data){
+      console.log(tweet.text + ' ' + data);
       resolve(data);
     });
   });
@@ -124,13 +141,14 @@ var streaming = function(bot_id){
       //console.log(bot_id);
       var id = '';
       var text = '';
+      var description = '';
       var ifMention = true;
       try{
         id        = ('user' in data && 'screen_name' in data.user) ? data.user.screen_name : null;
     		text      = ('text' in data) ? data.text.replace(new RegExp('^@' + bot_id + ' '), '') : '';
-    		ifMention = ('in_reply_to_user_id' in data) ? (data.in_reply_to_user_id !== null) : false;
+        description = ('user' in data && 'description' in data.user) ? data.user.description : 'no text';
+        ifMention = ('in_reply_to_user_id' in data) ? (data.in_reply_to_user_id !== null) : false;
       }catch(e){
-        console.log('e');
         console.log(e.message);
       }
 
@@ -141,7 +159,7 @@ var streaming = function(bot_id){
   		twitter.post('statuses/update', msg, function(error, tweet, response) {
   			console.log(tweet.text);
   		});*/
-      if(/*text = '診断して'*/true){
+      if(text.indexOf('診断して') != -1){
         console.log('id', id);
         get_tweets(id)
           .then(analysis_tweets)
@@ -149,17 +167,21 @@ var streaming = function(bot_id){
             //console.log('streamng', result);
             var msg = {
               status: '@' + id + ' '
-                    + 'あなたのツイートから分析したネガティブ度合い(0から1までの値)は'
-                    + result
-                    + 'です。'
+                    + 'あなたのツイートから分析したポジティブ度合いは'
+                    + (Math.floor(result.avedegs*100.0))
+                    + '%です。'
                     + 'どう感じますか？'
                     + '自分の予想より高いと思う場合には「高い」、逆なら「低い」と教えてください',
             };
             twitter.post('statuses/update', msg, function(error, tweet, response) {
         			console.log(tweet.text);
         		});
-            database.post_to_db(result)
+            console.log('result.tweets', result.tweets);
+            database.post_to_db_tweet_data(id, description, result.avedegs, result.tweets, result.degrees);
           });
+      }
+      if(text.indexOf('高い') != -1 || text.indexOf('低い') != -1){
+        database.post_to_db_evaluation(id, description, text);
       }
   	});
   });
