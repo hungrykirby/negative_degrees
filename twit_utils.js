@@ -136,7 +136,7 @@ var analysis_tweet = function(tweet){
 };
 
 var streaming = function(bot_id){
-  twitter.stream('user', function(stream) {
+  twitter.stream('statuses/filter', {track: '@' + bot_id}, function(stream) {
   	stream.on('data', function(data) {
       //console.log(bot_id);
       var id = '';
@@ -153,6 +153,7 @@ var streaming = function(bot_id){
       }
 
   		if (!ifMention || id == bot_id) return;
+      console.log(text);
   		/*var msg = {
         status: '@' + id + ' ' + text,
       };
@@ -173,10 +174,15 @@ var streaming = function(bot_id){
                     + 'どう感じますか？'
                     + '自分の予想より高いと思う場合には「高い」、逆なら「低い」と教えてください',
             };
-            twitter.post('statuses/update', msg, function(error, tweet, response) {
-        			console.log(tweet.text);
-              console.log('------------------------------');
-        		});
+            try{
+              twitter.post('statuses/update', msg, function(error, tweet, response) {
+        			  console.log(tweet.text);
+                console.log('------------------------------');
+        		  });
+            }catch(e){
+              console.log(e.message);
+            }
+
             console.log('result.tweets', result.tweets);
             database.post_to_db_tweet_data(id, description, result.avedegs, result.tweets, result.degrees);
           });

@@ -77,7 +77,7 @@ function get_degrees(fileName, token){
       returnNum = splitData[3];
     }
   }
-  return parseFloat(returnNum);
+  return Number(returnNum);
 }
 
 exports.analyze_sentence = analyze_sentence;
