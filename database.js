@@ -19,7 +19,8 @@ var options = {
   }
 };
 
-var db = mongoose.createConnection('mongodb://localhost/negativeDegrees4', options);
+var db_url = process.env.MONGODB_URI || 'mongodb://localhost/negativeDegrees4'
+var db = mongoose.createConnection(db_url, options);
 db.on("error", console.error.bind(console, "Connection failed..."));
 db.once("open", function() {
     console.log("Connected to database...");
