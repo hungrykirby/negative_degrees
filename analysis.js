@@ -5,6 +5,7 @@ var builder = kuromoji.builder({
 var fs = require('fs');
 
 var analyze_sentence = function(sentence){
+  if(sentence === undefined || sentence === '') return;
   return new Promise(function(resolve, reject){
     builder.build(function(err, tokenizer) {
       if(err) { throw err; }
@@ -54,6 +55,7 @@ var analyze_sentence = function(sentence){
           }
           break;
         }
+        console.log(tokens[i].basic_form + ':' + (Number(degree) + 1)/2.0 + ':' + count);
       }
       if(count !== 0){
         //console.log(sum/count);

@@ -92,7 +92,8 @@ var analysis_tweets = function(tweets){
     var tweet_collection = [];
     for (var i = 0; i < tweets.length; i++) {
       tweet_collection[i] = tweets[i].text;
-      promises.push(analysis_tweet(tweets[i]));
+      var shaped_text = tweets[i].text.replace(/[a-z|A-Z|@]/igm, "");
+      promises.push(analysis_tweet(shaped_text));
     }
     Promise.all(promises)
       .then(function (results) {
@@ -126,17 +127,18 @@ var analysis_tweets = function(tweets){
     });
 };
 
-var analysis_tweet = function(tweet){
+var analysis_tweet = function(tweet_text){
   return new Promise(function(resolve, reject){
-    analysis.analyze_sentence(tweet.text).then(function(data){
-      console.log(tweet.text + ' ' + data);
+    analysis.analyze_sentence(tweet_text).then(function(data){
+      console.log(tweet_text + ' ' + data);
       resolve(data);
     });
   });
 };
 
 var streaming = function(bot_id){
-  twitter.stream('statuses/filter', {track: '@' + bot_id}, function(stream) {
+  //twitter.stream('statuses/filter', {track: '@' + bot_id}, function(stream) {
+  twitter.stream('user', function(stream) {
   	stream.on('data', function(data) {
       //console.log(bot_id);
       var id = '';

@@ -1,6 +1,7 @@
 var mongoose = require('mongoose');
 var isUserSchemaDefined = false;
 var isEvalSchemaDefined = false;
+var mode = 'debug';
 
 var options = {
   server:{
@@ -20,6 +21,9 @@ var options = {
 };
 
 var db_url = process.env.MONGOHQ_URL || 'mongodb://localhost/negativeDegrees4'
+if(mode === 'debug'){
+  db_url = 'mongodb://localhost/negativeDegrees_tmp'
+}
 var db = mongoose.createConnection(db_url, options);
 db.on("error", console.error.bind(console, "Connection failed..."));
 db.once("open", function() {
@@ -62,7 +66,7 @@ exports.post_to_db_tweet_data = function(userid, description, avedegs, tweets, d
   if(!isUserSchemaDefined){
 
   }
-  console.log('database', description);
+  //console.log('database', description);
   let arr = [];
   for(let i = 0; i < tweets.length; i++){
     arr[i] = {
@@ -89,7 +93,7 @@ exports.post_to_db_tweet_data = function(userid, description, avedegs, tweets, d
     if (err) {
       console.log('err', err);
     }
-    console.log(data);
+    console.log('save done!');
   });
   //db.disconnect();
   //db.close();
