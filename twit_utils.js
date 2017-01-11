@@ -92,7 +92,14 @@ var analysis_tweets = function(tweets){
     var tweet_collection = [];
     for (var i = 0; i < tweets.length; i++) {
       tweet_collection[i] = tweets[i].text;
-      var shaped_text = tweets[i].text.replace(/[a-z|A-Z|@]/igm, "");
+      var shaped_text = "";
+      //shaped_text = weets[i].text.replace(/(https?://[\w/:%#\$&\?\(\)~\.=\+\-]+)/igm, "");
+      //shaped_text = tweets[i].text.replace(/@.*\x20/, "");
+      shaped_text = shaped_text.replace(/https?:\/\/[\w/:%#\$&\?\(\)~\.=\+\-]+/, ""); //url
+      shaped_text = shaped_text.replace(/@[a-z0-9_]+/, ""); //リプライを削除
+      shaped_text = shaped_text.replace(/RT:/, ""); //RT
+      shaped_text = shaped_text.replace(/診断して/igm, "");
+      shaped_text = shaped_text.replace(/[a-zA-Z_]+/, "");
       promises.push(analysis_tweet(shaped_text));
     }
     Promise.all(promises)

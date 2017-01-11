@@ -1,7 +1,8 @@
 var mongoose = require('mongoose');
 var isUserSchemaDefined = false;
 var isEvalSchemaDefined = false;
-var mode = 'debug';
+//var mode = 'debug';
+var mode = 'production';
 
 var options = {
   server:{
