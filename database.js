@@ -21,11 +21,15 @@ var options = {
   }
 };
 
-var db_url = process.env.MONGOHQ_URL || 'mongodb://localhost/negativeDegrees4'
+var db_url;
+//var db_url = process.env.MONGOHQ_URL || 'mongodb://localhost/negativeDegrees4'
 if(process.env.MORD === 'debug'){
   db_url = 'mongodb://localhost/negativeDegrees_tmp'
   console.log('debug mode!');
+}else{
+  db_url = 'mongodb://localhost/negativeDegrees_' + process.env.MORD;
 }
+console.log("Mord:", db_url);
 var db = mongoose.createConnection(db_url, options);
 db.on("error", console.error.bind(console, "Connection failed..."));
 db.once("open", function() {

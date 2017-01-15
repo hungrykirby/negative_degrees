@@ -1,7 +1,7 @@
 var Twitter = require('twitter');
 var analysis = require('./analysis');
 var database = require('./database');
-var calc = require('./caluculate')
+var calc = require('./calculate')
 
 var twitter = new Twitter({
     consumer_key: process.env.CONSUMER_KEY,
