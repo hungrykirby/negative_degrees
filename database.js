@@ -2,7 +2,7 @@ var mongoose = require('mongoose');
 var isUserSchemaDefined = false;
 var isEvalSchemaDefined = false;
 //var mode = 'debug';
-var mode = 'production';
+//var mode = 'production';
 
 var options = {
   server:{
@@ -22,8 +22,9 @@ var options = {
 };
 
 var db_url = process.env.MONGOHQ_URL || 'mongodb://localhost/negativeDegrees4'
-if(mode === 'debug'){
+if(process.env.MORD === 'debug'){
   db_url = 'mongodb://localhost/negativeDegrees_tmp'
+  console.log('debug mode!');
 }
 var db = mongoose.createConnection(db_url, options);
 db.on("error", console.error.bind(console, "Connection failed..."));

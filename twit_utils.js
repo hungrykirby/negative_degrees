@@ -1,6 +1,7 @@
 var Twitter = require('twitter');
 var analysis = require('./analysis');
 var database = require('./database');
+var calc = require('./caluculate')
 
 var twitter = new Twitter({
     consumer_key: process.env.CONSUMER_KEY,
@@ -92,14 +93,16 @@ var analysis_tweets = function(tweets){
     var tweet_collection = [];
     for (var i = 0; i < tweets.length; i++) {
       tweet_collection[i] = tweets[i].text;
-      var shaped_text = "";
+      var shaped_text = tweets[i].text;
       //shaped_text = weets[i].text.replace(/(https?://[\w/:%#\$&\?\(\)~\.=\+\-]+)/igm, "");
       //shaped_text = tweets[i].text.replace(/@.*\x20/, "");
-      shaped_text = shaped_text.replace(/https?:\/\/[\w/:%#\$&\?\(\)~\.=\+\-]+/, ""); //url
-      shaped_text = shaped_text.replace(/@[a-z0-9_]+/, ""); //リプライを削除
-      shaped_text = shaped_text.replace(/RT:/, ""); //RT
+      shaped_text = shaped_text.replace(/https?:\/\/[\w/:%#\$&\?\(\)~\.=\+\-]+/g, ""); //url
+      shaped_text = shaped_text.replace(/@[a-z0-9_]+/g, ""); //リプライを削除
+      //shaped_text = shaped_text.replace(/RT:/, ""); //RT
       shaped_text = shaped_text.replace(/診断して/igm, "");
-      shaped_text = shaped_text.replace(/[a-zA-Z_]+/, "");
+      shaped_text = shaped_text.replace(/[a-zA-Z0-9_]+/g, "");
+      shaped_text = shaped_text.replace(/\x20/g, "");
+      shaped_text = shaped_text.replace(/[０-９]+/g, "");
       promises.push(analysis_tweet(shaped_text));
     }
     Promise.all(promises)
@@ -178,10 +181,11 @@ var streaming = function(bot_id){
             var msg = {
               status: '@' + id + ' '
                     + 'あなたのツイートから分析したポジティブ度合いは'
-                    + (Math.floor(result.avedegs*100.0))
+                    + (Math.floor(calc.calc1(result.avedegs)*100.0))
                     + '%です。'
                     + 'どう感じますか？'
-                    + '自分の予想より高いと思う場合には「高い」、逆なら「低い」と教えてください',
+                    + '自分の予想より高いと思う場合には「高い」、逆なら「低い」と教えてください。'
+                    + 'ぜひRTしてね！ #negatter',
             };
             try{
               twitter.post('statuses/update', msg, function(error, tweet, response) {
