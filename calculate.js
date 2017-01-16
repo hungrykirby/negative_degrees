@@ -5,10 +5,10 @@ exports.calc1 = function(value){
     result += index[i]*Math.pow(value, i);
   }
   //console.log("clamp", ofClamp(value, 1, 0));
-  return ofClamp(result, 1, 0);
+  return Math.floor(ofClamp(convertTo100(result), -100, 100));
 }
 
-function ofClamp(value, max, min){
+function ofClamp(value, min, max){
   result = value;
   if(value > max){
     result = max;
@@ -17,4 +17,8 @@ function ofClamp(value, max, min){
     result = min;
   }
   return result;
+}
+
+function convertTo100(value){
+  result = value*200.0 - 100;
 }

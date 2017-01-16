@@ -166,13 +166,49 @@ var streaming = function(bot_id){
 
   		if (!ifMention || id == bot_id) return;
       console.log(text);
+      const noiselist = ['おっぱい',
+                          '股',
+                          'おまた',
+                          'ちんぽ',
+                          'ちんこ',
+                          'おちんちん',
+                          'ちんちん',
+                          '股間',
+                          'ぱんつ',
+                          'うんこ'];
+      const negativelist = ['死ね',
+                          'しね',
+                          '氏ね',
+                          'シネ',
+                          'くそ',
+                          'クソ',
+                          'バカ',
+                          '馬鹿',
+                          'ばか'];
   		/*var msg = {
         status: '@' + id + ' ' + text,
       };
   		twitter.post('statuses/update', msg, function(error, tweet, response) {
   			console.log(tweet.text);
   		});*/
-      if(text.indexOf('診断して') != -1){
+      let hasNega = false
+      let hasNoise = false;
+      for(let n of negativelist){
+        if(text.indexOf(n) > -1){
+          hasNega = true;
+        }
+      }
+      for(let n of noiselist){
+        if(text.indexOf(n) > -1){
+          hasNoise = true;
+          break;
+        }
+      }
+      if(hasNega){
+        post_tweet('もっときれいな言葉を使いましょう');
+      }else if(hasNoise){
+        post_tweet('ちょ…おい…')
+      }else if(text.indexOf('診断して') != -1){
         console.log('id', id);
         get_tweets(id)
           .then(analysis_tweets)
@@ -180,36 +216,33 @@ var streaming = function(bot_id){
             //console.log('streamng', result);
             var msg = {
               status: '@' + id + ' '
-                    + 'あなたのツイートから分析したポジティブ度合いは'
-                    + (Math.floor(calc.calc1(result.avedegs)*100.0))
+                    + 'あなたのツイートから分析した100から-100までのポジティブ度合いは'
+                    + calc.calc1
                     + '%です。'
-                    + 'どう感じますか？'
                     + '自分の予想より高いと思う場合には「高い」、逆なら「低い」と教えてください。'
                     + 'ぜひRTしてね！ #negatter',
             };
-            try{
-              twitter.post('statuses/update', msg, function(error, tweet, response) {
-        			  console.log(tweet.text);
-                console.log('------------------------------');
-        		  });
-            }catch(e){
-              console.log(e.message);
-            }
-
+            post_tweet(msg);
             console.log('result.tweets', result.tweets);
+            console.log('-----------------------------');
             database.post_to_db_tweet_data(id, description, result.avedegs, result.tweets, result.degrees);
           });
-      }
-      if(text.indexOf('高い') != -1 || text.indexOf('低い') != -1){
+      }else if(text.indexOf('高い') != -1 || text.indexOf('低い') != -1){
         database.post_to_db_evaluation(id, description, text);
       }
   	});
   });
 }
 
-var get_reply_name = function(){
-
-};
+var post_tweet = function(msg){
+  try{
+    twitter.post('statuses/update', msg, function(error, tweet, response) {
+      console.log(tweet.text);
+    });
+  }catch(e){
+    console.log(e.message);
+  }
+}
 
 exports.delete_tweets = delete_tweets;
 exports.get_screen_name = get_screen_name;
