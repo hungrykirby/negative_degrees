@@ -20,5 +20,5 @@ function ofClamp(value, min, max){
 }
 
 function convertTo100(value){
-  result = value*200.0 - 100;
+  return value*200.0 - 100;
 }

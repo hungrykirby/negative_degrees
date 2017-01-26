@@ -1,7 +1,8 @@
 var Twitter = require('twitter');
-var analysis = require('./analysis');
+//var analysis = require('./analysis');
 var database = require('./database');
-var calc = require('./calculate')
+var calc = require('./calculate');
+const readDict = require('./read_dict')
 
 var twitter = new Twitter({
     consumer_key: process.env.CONSUMER_KEY,
@@ -139,7 +140,8 @@ var analysis_tweets = function(tweets){
 
 var analysis_tweet = function(tweet_text){
   return new Promise(function(resolve, reject){
-    analysis.analyze_sentence(tweet_text).then(function(data){
+    //analysis.analyze_sentence(tweet_text).then(function(data){
+    readDict.analyze_sentence(tweet_text).then(function(data){
       console.log(tweet_text + ' ' + data);
       resolve(data);
     });
@@ -147,6 +149,7 @@ var analysis_tweet = function(tweet_text){
 };
 
 var streaming = function(bot_id){
+  console.log(bot_id);
   //twitter.stream('statuses/filter', {track: '@' + bot_id}, function(stream) {
   twitter.stream('user', function(stream) {
   	stream.on('data', function(data) {
@@ -157,15 +160,20 @@ var streaming = function(bot_id){
       var ifMention = true;
       try{
         id        = ('user' in data && 'screen_name' in data.user) ? data.user.screen_name : null;
+        if(data.text === undefined || data.text.indexOf('@' + bot_id) === -1){
+          console.log(data.text.indexOf('@' + bot_id));
+          return;
+        }
     		text      = ('text' in data) ? data.text.replace(new RegExp('^@' + bot_id + ' '), '') : '';
         description = ('user' in data && 'description' in data.user) ? data.user.description : 'no text';
         ifMention = ('in_reply_to_user_id' in data) ? (data.in_reply_to_user_id !== null) : false;
       }catch(e){
         console.log(e.message);
+        return;
       }
 
   		if (!ifMention || id == bot_id) return;
-      console.log(text);
+      console.log('input text', text);
       const noiselist = ['おっぱい',
                           '股',
                           'おまた',
@@ -175,7 +183,11 @@ var streaming = function(bot_id){
                           'ちんちん',
                           '股間',
                           'ぱんつ',
-                          'うんこ'];
+                          'うんこ',
+                          'えっち',
+                          'エッチ',
+                          'セックス',
+                          'せっくす'];
       const negativelist = ['死ね',
                           'しね',
                           '氏ね',
@@ -185,17 +197,12 @@ var streaming = function(bot_id){
                           'バカ',
                           '馬鹿',
                           'ばか'];
-  		/*var msg = {
-        status: '@' + id + ' ' + text,
-      };
-  		twitter.post('statuses/update', msg, function(error, tweet, response) {
-  			console.log(tweet.text);
-  		});*/
       let hasNega = false
       let hasNoise = false;
       for(let n of negativelist){
         if(text.indexOf(n) > -1){
           hasNega = true;
+          break;
         }
       }
       for(let n of noiselist){
@@ -205,9 +212,23 @@ var streaming = function(bot_id){
         }
       }
       if(hasNega){
-        post_tweet('もっときれいな言葉を使いましょう');
+        try{
+          twitter.post('statuses/update', {status: '@' + id + ' ' + 'もっときれいな言葉を使いましょう'}, function(error, tweet, response) {
+            console.log('err', error);
+            console.log('text', tweet.text);
+          });
+        }catch(e){
+          console.log(e.message);
+        }
       }else if(hasNoise){
-        post_tweet('ちょ…おい…')
+        try{
+          twitter.post('statuses/update', {status: '@' + id + ' ' + 'ちょ…おいおい…'}, function(error, tweet, response) {
+            console.log('err', error);
+            console.log('text', tweet.text);
+          });
+        }catch(e){
+          console.log(e.message);
+        }
       }else if(text.indexOf('診断して') != -1){
         console.log('id', id);
         get_tweets(id)
@@ -217,12 +238,19 @@ var streaming = function(bot_id){
             var msg = {
               status: '@' + id + ' '
                     + 'あなたのツイートから分析した100から-100までのポジティブ度合いは'
-                    + calc.calc1
+                    + calc.calc1(result.avedegs)
                     + '%です。'
                     + '自分の予想より高いと思う場合には「高い」、逆なら「低い」と教えてください。'
                     + 'ぜひRTしてね！ #negatter',
             };
-            post_tweet(msg);
+            try{
+              twitter.post('statuses/update', msg, function(error, tweet, response) {
+                console.log('err', error);
+                console.log('text', tweet.text);
+              });
+            }catch(e){
+              console.log(e.message);
+            }
             console.log('result.tweets', result.tweets);
             console.log('-----------------------------');
             database.post_to_db_tweet_data(id, description, result.avedegs, result.tweets, result.degrees);
@@ -236,8 +264,9 @@ var streaming = function(bot_id){
 
 var post_tweet = function(msg){
   try{
-    twitter.post('statuses/update', msg, function(error, tweet, response) {
-      console.log(tweet.text);
+    twitter.post('statuses/update', {status: '@' + id + ' ' + msg}, function(error, tweet, response) {
+      console.log('err', error);
+      console.log('text', tweet.text);
     });
   }catch(e){
     console.log(e.message);
