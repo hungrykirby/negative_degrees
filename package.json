@@ -10,7 +10,7 @@
     "twitter"
   ],
   "engines": {
-    "node": "6.2.1",
+    "node": "6.2.2",
     "npm": "3.9.3"
   },
   "repository": {
