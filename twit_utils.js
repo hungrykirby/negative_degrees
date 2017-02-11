@@ -93,7 +93,7 @@ var analysis_tweets = function(tweets){
     var tweet_collection = [];
     for (var i = 0; i < tweets.length; i++) {
       tweet_collection[i] = tweets[i].text;
-      console.log(tweets[i].text);
+      //console.log(tweets[i].text);
       var shaped_text = tweets[i].text;
       //shaped_text = weets[i].text.replace(/(https?://[\w/:%#\$&\?\(\)~\.=\+\-]+)/igm, "");
       //shaped_text = tweets[i].text.replace(/@.*\x20/, "");
@@ -104,6 +104,7 @@ var analysis_tweets = function(tweets){
       shaped_text = shaped_text.replace(/[a-zA-Z0-9_]+/g, "");
       shaped_text = shaped_text.replace(/\x20/g, "");
       shaped_text = shaped_text.replace(/[０-９]+/g, "");
+      console.log(shaped_text);
       promises.push(analysis_tweet(shaped_text));
     }
     Promise.all(promises)
@@ -142,7 +143,7 @@ var analysis_tweet = function(tweet_text){
   return new Promise(function(resolve, reject){
     //analysis.analyze_sentence(tweet_text).then(function(data){
     readDict.analyze_sentence(tweet_text).then(function(data){
-      console.log(tweet_text + ' ' + data);
+      console.log('text:' + tweet_text + ',num:' + data);
       resolve(data);
     });
   });
