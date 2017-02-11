@@ -5,6 +5,7 @@ var builder = kuromoji.builder({
 var fs = require('fs');
 
 var analyze_sentence = function(sentence){
+  console.log('sentence', sentence);
   return new Promise(function(resolve, reject){
     if(sentence === '' || sentence === undefined) resolve(0);
     builder.build(function(err, tokenizer) {

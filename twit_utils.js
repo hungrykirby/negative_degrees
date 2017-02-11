@@ -104,7 +104,7 @@ var analysis_tweets = function(tweets){
       shaped_text = shaped_text.replace(/[a-zA-Z0-9_]+/g, "");
       shaped_text = shaped_text.replace(/\x20/g, "");
       shaped_text = shaped_text.replace(/[０-９]+/g, "");
-      console.log(shaped_text);
+      //console.log(shaped_text);
       promises.push(analysis_tweet(shaped_text));
     }
     Promise.all(promises)
