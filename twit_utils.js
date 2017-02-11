@@ -94,8 +94,9 @@ var analysis_tweets = function(tweets){
 };
 
 var analysis_tweet = function(tweet_text){
+  console.log('in analysis_tweet func(after):' + tweet_text);
   return new Promise(function(resolve, reject){
-    console.log('in analysis_tweet func(in):' + tweet_text);
+    console.log('in analysis_tweet func(after):' + tweet_text);
     //analysis.analyze_sentence(tweet_text).then(function(data){
     readDict.analyze_sentence(tweet_text).then(function(data){
       console.log('text:' + tweet_text + ',num:' + data);
