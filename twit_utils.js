@@ -26,12 +26,11 @@ var get_screen_name = function(){
 var get_tweets = function(screen_name){
   return new Promise(function(resolve, reject){
     var params = {
-      count: 25,
+      count: 11,
       screen_name: screen_name,
     };
     twitter.get('statuses/user_timeline', params, function (error, tweets, response) {
       if (!error) {
-        console.log(tweets);
         resolve(tweets);
       }
     });
@@ -94,6 +93,7 @@ var analysis_tweets = function(tweets){
     var tweet_collection = [];
     for (var i = 0; i < tweets.length; i++) {
       tweet_collection[i] = tweets[i].text;
+      console.log(tweets[i].text);
       var shaped_text = tweets[i].text;
       //shaped_text = weets[i].text.replace(/(https?://[\w/:%#\$&\?\(\)~\.=\+\-]+)/igm, "");
       //shaped_text = tweets[i].text.replace(/@.*\x20/, "");

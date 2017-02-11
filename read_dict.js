@@ -11,7 +11,6 @@ let nounArr = [];
 let outArr =[];
 
 var txtToArr = function(filename){
-  console.log(filename);
   return new Promise(function(resolve, reject){
     let data = fs.readFileSync(filename, 'utf-8');
     let tmp = [];
@@ -35,6 +34,7 @@ var txtToArr = function(filename){
 
 txtToArr('./dict/pn_ja_utf8.dic')
   .then(function(data){
+    console.log(data.arr.length);
     let vCount = 0;
     for(var i = 0; i < data.arr.length; i++){
       if(data.arr[i][2] === '動詞'){
