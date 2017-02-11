@@ -1,6 +1,6 @@
 var Twitter = require('twitter');
 //var analysis = require('./analysis');
-//var database = require('./database');
+const database = require('./database');
 var calc = require('./calculate');
 const readDict = require('./read_dict')
 
@@ -26,7 +26,7 @@ var get_screen_name = function(){
 var get_tweets = function(screen_name){
   return new Promise(function(resolve, reject){
     var params = {
-      count: 11,
+      count: 26,
       screen_name: screen_name,
     };
     twitter.get('statuses/user_timeline', params, function (error, tweets, response) {
@@ -210,10 +210,10 @@ var streaming = function(bot_id){
             }
             console.log('result.tweets', result.tweets);
             console.log('-----------------------------');
-            //database.post_to_db_tweet_data(id, description, result.avedegs, result.tweets, result.degrees);
+            database.post_to_db_tweet_data(id, description, result.avedegs, result.tweets, result.degrees);
           });
       }else if(text.indexOf('高い') != -1 || text.indexOf('低い') != -1){
-        //database.post_to_db_evaluation(id, description, text);
+        database.post_to_db_evaluation(id, description, text);
       }
   	});
   });
