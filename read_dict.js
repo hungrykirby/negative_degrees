@@ -114,6 +114,7 @@ function get_degree(token){
       degree = a[3];
     }
   }
+  console.log("degree", degree);
   return Number(degree);
 }
 exports.analyze_sentence = analyze_sentence;
