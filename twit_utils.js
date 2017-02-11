@@ -31,7 +31,7 @@ var get_tweets = function(screen_name){
     };
     twitter.get('statuses/user_timeline', params, function (error, tweets, response) {
       if (!error) {
-        //console.log(tweets);
+        console.log(tweets);
         resolve(tweets);
       }
     });
