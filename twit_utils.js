@@ -253,10 +253,10 @@ var streaming = function(bot_id){
             }
             console.log('result.tweets', result.tweets);
             console.log('-----------------------------');
-            database.post_to_db_tweet_data(id, description, result.avedegs, result.tweets, result.degrees);
+            //database.post_to_db_tweet_data(id, description, result.avedegs, result.tweets, result.degrees);
           });
       }else if(text.indexOf('高い') != -1 || text.indexOf('低い') != -1){
-        database.post_to_db_evaluation(id, description, text);
+        //database.post_to_db_evaluation(id, description, text);
       }
   	});
   });
