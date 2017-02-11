@@ -58,6 +58,7 @@ txtToArr('./dict/pn_ja_utf8.dic')
 
 
 var analyze_sentence = function(sentence){
+  console.log('sentence:' + sentence + ':s');
   return new Promise(function(resolve, reject){
     if(sentence === '' || sentence === undefined) resolve(0);
     builder.build(function(err, tokenizer) {

@@ -37,52 +37,6 @@ var get_tweets = function(screen_name){
   });
 };
 
-var delete_tweets = function(tweets){
-  var promises = [];
-  for (var i = 0; i < tweets.length; i++) {
-    promises.push(delete_tweet(tweets[i]));
-  }
-  Promise.all(promises)
-    .then(function (results) {
-      console.log(results);
-  });
-};
-
-var delete_tweet = function(tweet){
-  return new Promise(function(resolve, reject){
-    /*var params = {
-      id: tweet.id,
-    };*/
-    //console.log(tweet.id_str);
-    twitter.post('statuses/destroy', {id: tweet.id_str}, function(error, data){
-      console.log(tweet.id_str);
-      console.log(data);
-      if(!error){
-        //console.log(data);
-        resolve(data);
-      }
-    });
-  });
-};
-
-var show_tweets = function(tweets){
-  var promises = [];
-  for (var i = 0; i < tweets.length; i++) {
-    promises.push(show_tweet(tweets[i]));
-  }
-  Promise.all(promises)
-    .then(function (results) {
-      //console.log(results);
-  });
-};
-
-var show_tweet = function(tweet){
-  return new Promise(function(resolve, reject){
-    //console.log(tweet.text);
-    resolve(tweet);
-  });
-};
-
 var analysis_tweets = function(tweets){
   return new Promise(function(resolve, reject){
     var promises = [];
@@ -140,8 +94,8 @@ var analysis_tweets = function(tweets){
 };
 
 var analysis_tweet = function(tweet_text){
-  console.log('in analysis_tweet func:' + tweet_text);
   return new Promise(function(resolve, reject){
+    console.log('in analysis_tweet func(in):' + tweet_text);
     //analysis.analyze_sentence(tweet_text).then(function(data){
     readDict.analyze_sentence(tweet_text).then(function(data){
       console.log('text:' + tweet_text + ',num:' + data);
@@ -274,6 +228,52 @@ var post_tweet = function(msg){
     console.log(e.message);
   }
 }
+
+var delete_tweets = function(tweets){
+  var promises = [];
+  for (var i = 0; i < tweets.length; i++) {
+    promises.push(delete_tweet(tweets[i]));
+  }
+  Promise.all(promises)
+    .then(function (results) {
+      console.log(results);
+  });
+};
+
+var delete_tweet = function(tweet){
+  return new Promise(function(resolve, reject){
+    /*var params = {
+      id: tweet.id,
+    };*/
+    //console.log(tweet.id_str);
+    twitter.post('statuses/destroy', {id: tweet.id_str}, function(error, data){
+      console.log(tweet.id_str);
+      console.log(data);
+      if(!error){
+        //console.log(data);
+        resolve(data);
+      }
+    });
+  });
+};
+
+var show_tweets = function(tweets){
+  var promises = [];
+  for (var i = 0; i < tweets.length; i++) {
+    promises.push(show_tweet(tweets[i]));
+  }
+  Promise.all(promises)
+    .then(function (results) {
+      //console.log(results);
+  });
+};
+
+var show_tweet = function(tweet){
+  return new Promise(function(resolve, reject){
+    //console.log(tweet.text);
+    resolve(tweet);
+  });
+};
 
 exports.delete_tweets = delete_tweets;
 exports.get_screen_name = get_screen_name;
