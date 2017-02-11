@@ -140,6 +140,7 @@ var analysis_tweets = function(tweets){
 };
 
 var analysis_tweet = function(tweet_text){
+  console.log('in analysis_tweet func:' + tweet_text);
   return new Promise(function(resolve, reject){
     //analysis.analyze_sentence(tweet_text).then(function(data){
     readDict.analyze_sentence(tweet_text).then(function(data){
