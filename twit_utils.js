@@ -1,6 +1,6 @@
 var Twitter = require('twitter');
 //var analysis = require('./analysis');
-var database = require('./database');
+//var database = require('./database');
 var calc = require('./calculate');
 const readDict = require('./read_dict')
 
